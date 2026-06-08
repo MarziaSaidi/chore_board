@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Manager
 
-## Getting Started
+A simple task-manager web app built with [Next.js](https://nextjs.org) (App Router, TypeScript), [Tailwind CSS](https://tailwindcss.com), and [Supabase](https://supabase.com).
 
-First, run the development server:
+## Prerequisites
+
+- [Node.js](https://nodejs.org) 18.18+ (developed on v24)
+- npm (developed on v11)
+- A [Supabase](https://supabase.com) account (free tier is fine)
+
+## Tech stack
+
+- Next.js 15 (App Router, `src/` directory, `@/*` import alias)
+- TypeScript
+- Tailwind CSS v4
+- Supabase JS client (`@supabase/supabase-js`) + SSR helpers (`@supabase/ssr`)
+
+## Setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create your environment file:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Then fill in the values from your Supabase project (see below).
+
+## Create your Supabase project (manual step)
+
+This repo ships with Supabase client code but **no project** — you need to create
+one under your own account:
+
+1. Go to [supabase.com](https://supabase.com) and sign in (or create an account).
+2. Click **New project**, give it a name, set a database password, and pick a region.
+3. Wait for the project to finish provisioning.
+4. In the project dashboard, open **Project Settings → API**.
+5. Copy the **Project URL** and the **anon / public** API key.
+6. Paste them into `.env.local`:
+
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+> `.env.local` is gitignored and will never be committed. `.env.example` is the
+> committed template.
+
+The Supabase clients live in `src/lib/supabase/`:
+
+- `client.ts` — browser client (use in Client Components)
+- `server.ts` — server client with cookie handling (use in Server Components, Route Handlers, and Server Actions)
+
+## Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build   # production build
+npm run start   # run the production build
+npm run lint    # lint
+```
 
-## Learn More
+## Push to a git remote
 
-To learn more about Next.js, take a look at the following resources:
+This project is already a git repo with an initial commit. To push it to GitHub
+(or another remote):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+git remote add origin <your-remote-url>
+git push -u origin main
+```
