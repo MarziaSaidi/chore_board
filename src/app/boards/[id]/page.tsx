@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBoardById } from "@/lib/db/boards";
 import { getBoardTasks } from "@/lib/db/tasks";
+import { getBoardMembers } from "@/lib/db/members";
 import { AppHeader } from "@/components/AppHeader";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 
@@ -23,9 +24,10 @@ export default async function BoardPage({
 
   if (!user) redirect("/login");
 
-  const [board, tasks] = await Promise.all([
+  const [board, tasks, members] = await Promise.all([
     getBoardById(id),
     getBoardTasks(id),
+    getBoardMembers(id),
   ]);
 
   if (!board) notFound();
@@ -54,7 +56,7 @@ export default async function BoardPage({
           </p>
         ) : null}
 
-        <KanbanBoard boardId={board.id} initialTasks={tasks} />
+        <KanbanBoard boardId={board.id} initialTasks={tasks} members={members} />
       </main>
     </div>
   );
