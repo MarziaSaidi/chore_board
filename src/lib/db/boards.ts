@@ -6,9 +6,22 @@ import type { Board } from "@/lib/supabase/types";
 
 export async function getUserBoards(userId: string): Promise<Board[]> {
   const supabase = await createClient();
+
+  // Fetch board IDs the user is a member of (includes boards they were invited to)
+  const { data: memberships, error: memberError } = await supabase
+    .from("board_members")
+    .select("board_id")
+    .eq("user_id", userId);
+
+  if (memberError) throw new Error(memberError.message);
+  if (!memberships || memberships.length === 0) return [];
+
+  const boardIds = memberships.map((m) => m.board_id);
+
   const { data, error } = await supabase
     .from("boards")
     .select("id, user_id, title, created_at")
+    .in("id", boardIds)
     .order("created_at", { ascending: false })
     .returns<Board[]>();
 
