@@ -6,6 +6,7 @@ import { getBoardTasks } from "@/lib/db/tasks";
 import { getBoardMembers } from "@/lib/db/members";
 import { AppHeader } from "@/components/AppHeader";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
+import { MembersPanel } from "@/components/board/MembersPanel";
 
 export default async function BoardPage({
   params,
@@ -43,9 +44,39 @@ export default async function BoardPage({
         >
           ← Back to boards
         </Link>
-        <h1 className="mt-3 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {board.title}
-        </h1>
+
+        <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {board.title}
+          </h1>
+
+          {/* Member avatars — compact preview in header */}
+          <div className="flex -space-x-2">
+            {members.slice(0, 5).map((m) => {
+              const display = m.profile.full_name ?? m.profile.email;
+              const initials = display
+                .split(" ")
+                .map((w: string) => w[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2);
+              return (
+                <span
+                  key={m.user_id}
+                  title={display}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 ring-2 ring-white dark:bg-indigo-900 dark:text-indigo-300 dark:ring-zinc-900"
+                >
+                  {initials}
+                </span>
+              );
+            })}
+            {members.length > 5 && (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium text-zinc-600 ring-2 ring-white dark:bg-zinc-700 dark:text-zinc-300 dark:ring-zinc-900">
+                +{members.length - 5}
+              </span>
+            )}
+          </div>
+        </div>
 
         {deleteError ? (
           <p
@@ -55,6 +86,13 @@ export default async function BoardPage({
             {deleteError}
           </p>
         ) : null}
+
+        <MembersPanel
+          boardId={board.id}
+          members={members}
+          ownerId={board.user_id}
+          currentUserId={user.id}
+        />
 
         <KanbanBoard boardId={board.id} initialTasks={tasks} members={members} />
       </main>
