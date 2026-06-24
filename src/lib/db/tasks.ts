@@ -1,18 +1,10 @@
-import { cacheTag, cacheLife, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Task, TaskStatus } from "@/lib/supabase/types";
-
-// ── Cache tag helpers ─────────────────────────────────────────────
-
-export const tasksCacheTag = (boardId: string) => `board:${boardId}:tasks`;
 
 // ── Queries ───────────────────────────────────────────────────────
 
 export async function getBoardTasks(boardId: string): Promise<Task[]> {
-  "use cache";
-  cacheLife("seconds");
-  cacheTag(tasksCacheTag(boardId));
-
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("tasks")
@@ -87,5 +79,5 @@ export async function removeTask(taskId: string): Promise<void> {
 // ── Cache invalidation helper ─────────────────────────────────────
 
 export function invalidateBoardTasks(boardId: string) {
-  revalidateTag(tasksCacheTag(boardId), "default");
+  revalidatePath(`/boards/${boardId}`);
 }

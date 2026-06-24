@@ -1,19 +1,10 @@
-import { cacheTag, cacheLife, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Board } from "@/lib/supabase/types";
-
-// ── Cache tag helpers ─────────────────────────────────────────────
-
-export const boardsCacheTag = (userId: string) => `boards:user:${userId}`;
-export const boardCacheTag = (boardId: string) => `board:${boardId}`;
 
 // ── Queries ───────────────────────────────────────────────────────
 
 export async function getUserBoards(userId: string): Promise<Board[]> {
-  "use cache";
-  cacheLife("minutes");
-  cacheTag(boardsCacheTag(userId));
-
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("boards")
@@ -26,10 +17,6 @@ export async function getUserBoards(userId: string): Promise<Board[]> {
 }
 
 export async function getBoardById(boardId: string): Promise<Board | null> {
-  "use cache";
-  cacheLife("hours");
-  cacheTag(boardCacheTag(boardId));
-
   const supabase = await createClient();
   const { data } = await supabase
     .from("boards")
@@ -62,10 +49,10 @@ export async function removeBoard(boardId: string): Promise<void> {
 
 // ── Cache invalidation helpers ────────────────────────────────────
 
-export function invalidateUserBoards(userId: string) {
-  revalidateTag(boardsCacheTag(userId), "default");
+export function invalidateUserBoards(_userId: string) {
+  revalidatePath("/dashboard");
 }
 
 export function invalidateBoard(boardId: string) {
-  revalidateTag(boardCacheTag(boardId), "default");
+  revalidatePath(`/boards/${boardId}`);
 }
