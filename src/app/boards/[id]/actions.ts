@@ -103,6 +103,26 @@ export async function updateTask(
   return null;
 }
 
+export async function moveTask(
+  taskId: string,
+  boardId: string,
+  status: TaskStatus,
+  position: number,
+): Promise<void> {
+  const { user } = await requireUser();
+
+  const rl = checkRateLimit(`moveTask:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) return;
+
+  try {
+    await patchTask(taskId, { status, position });
+  } catch {
+    // realtime will reconcile state on next subscription event
+  }
+
+  invalidateBoardTasks(boardId);
+}
+
 export async function deleteTask(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const boardId = String(formData.get("boardId") ?? "");

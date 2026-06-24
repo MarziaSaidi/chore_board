@@ -62,6 +62,7 @@ export type UpdateTaskPayload = {
   title?: string;
   description?: string;
   status?: TaskStatus;
+  position?: number;
 };
 
 export async function patchTask(taskId: string, update: UpdateTaskPayload): Promise<void> {
