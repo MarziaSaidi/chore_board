@@ -7,6 +7,17 @@ export type Board = {
   created_at: string;
 };
 
+export type Profile = {
+  id: string;
+  email: string;
+  full_name: string | null;
+};
+
+export type BoardMember = {
+  user_id: string;
+  profile: Profile;
+};
+
 export type Task = {
   id: string;
   board_id: string;
@@ -15,5 +26,6 @@ export type Task = {
   description: string | null;
   status: TaskStatus;
   position: number;
+  assignee_id: string | null;
   created_at: string;
 };
