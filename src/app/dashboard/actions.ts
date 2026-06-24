@@ -2,31 +2,24 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/supabase/auth";
 
-export async function createBoard(formData: FormData) {
+export type BoardActionState = { error: string } | null;
+
+export async function createBoard(
+  _prevState: BoardActionState,
+  formData: FormData,
+): Promise<BoardActionState> {
   const title = String(formData.get("title") ?? "").trim();
+  if (!title) return { error: "Board title is required." };
 
-  if (!title) {
-    redirect(`/dashboard?error=${encodeURIComponent("Board title is required.")}`);
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  const { supabase, user } = await requireUser();
 
   const { error } = await supabase
     .from("boards")
     .insert({ title, user_id: user.id });
 
-  if (error) {
-    redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
-  }
+  if (error) return { error: error.message };
 
   revalidatePath("/dashboard");
   redirect("/dashboard");
@@ -34,19 +27,9 @@ export async function createBoard(formData: FormData) {
 
 export async function deleteBoard(formData: FormData) {
   const id = String(formData.get("id") ?? "");
+  if (!id) redirect("/dashboard");
 
-  if (!id) {
-    redirect("/dashboard");
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  const { supabase } = await requireUser();
 
   const { error } = await supabase.from("boards").delete().eq("id", id);
 
