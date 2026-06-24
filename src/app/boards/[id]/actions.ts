@@ -1,19 +1,27 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/supabase/auth";
+import {
+  insertTask,
+  patchTask,
+  removeTask,
+  getNextPosition,
+  invalidateBoardTasks,
+} from "@/lib/db/tasks";
+import { checkRateLimit, MUTATION_LIMIT } from "@/lib/rate-limit";
+import { toUserMessage } from "@/lib/errors";
 import type { TaskStatus } from "@/lib/supabase/types";
 
 export type TaskActionState = { error: string } | null;
 
 const VALID_STATUSES = new Set<TaskStatus>(["todo", "in_progress", "done"]);
 
-function assertValidStatus(value: string): TaskStatus {
-  if (!VALID_STATUSES.has(value as TaskStatus)) {
-    throw new Error(`Invalid task status: ${value}`);
+function parseStatus(raw: string): TaskStatus {
+  if (!VALID_STATUSES.has(raw as TaskStatus)) {
+    throw new Error(`Invalid task status: ${raw}`);
   }
-  return value as TaskStatus;
+  return raw as TaskStatus;
 }
 
 export async function createTask(
@@ -27,31 +35,26 @@ export async function createTask(
   if (!boardId) redirect("/dashboard");
   if (!title) return { error: "Task title is required." };
 
-  const status = assertValidStatus(rawStatus);
-  const { supabase, user } = await requireUser();
+  let status: TaskStatus;
+  try {
+    status = parseStatus(rawStatus);
+  } catch {
+    return { error: "Invalid status." };
+  }
 
-  // Use max(position)+1 so inserts are always ordered correctly even under load.
-  const { data: last } = await supabase
-    .from("tasks")
-    .select("position")
-    .eq("board_id", boardId)
-    .order("position", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { user } = await requireUser();
 
-  const position = (last?.position ?? 0) + 1;
+  const rl = checkRateLimit(`createTask:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) return { error: "Too many requests. Please slow down." };
 
-  const { error } = await supabase.from("tasks").insert({
-    board_id: boardId,
-    user_id: user.id,
-    title,
-    status,
-    position,
-  });
+  try {
+    const position = await getNextPosition(boardId);
+    await insertTask({ boardId, userId: user.id, title, status, position });
+  } catch (err) {
+    return { error: toUserMessage(err) };
+  }
 
-  if (error) return { error: error.message };
-
-  revalidatePath(`/boards/${boardId}`);
+  invalidateBoardTasks(boardId);
   return null;
 }
 
@@ -64,12 +67,7 @@ export async function updateTask(
 
   if (!id || !boardId) redirect(`/boards/${boardId || ""}`);
 
-  type TaskUpdate = {
-    title?: string;
-    description?: string;
-    status?: TaskStatus;
-  };
-
+  type TaskUpdate = { title?: string; description?: string; status?: TaskStatus };
   const update: TaskUpdate = {};
 
   if (formData.has("title")) {
@@ -81,18 +79,27 @@ export async function updateTask(
     update.description = String(formData.get("description")).trim();
   }
   if (formData.has("status")) {
-    update.status = assertValidStatus(String(formData.get("status")));
+    try {
+      update.status = parseStatus(String(formData.get("status")));
+    } catch {
+      return { error: "Invalid status." };
+    }
   }
 
   if (Object.keys(update).length === 0) redirect(`/boards/${boardId}`);
 
-  const { supabase } = await requireUser();
+  const { user } = await requireUser();
 
-  const { error } = await supabase.from("tasks").update(update).eq("id", id);
+  const rl = checkRateLimit(`updateTask:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) return { error: "Too many requests. Please slow down." };
 
-  if (error) return { error: error.message };
+  try {
+    await patchTask(id, update);
+  } catch (err) {
+    return { error: toUserMessage(err) };
+  }
 
-  revalidatePath(`/boards/${boardId}`);
+  invalidateBoardTasks(boardId);
   return null;
 }
 
@@ -102,13 +109,18 @@ export async function deleteTask(formData: FormData) {
 
   if (!id || !boardId) redirect(`/boards/${boardId || ""}`);
 
-  const { supabase } = await requireUser();
+  const { user } = await requireUser();
 
-  const { error } = await supabase.from("tasks").delete().eq("id", id);
-
-  if (error) {
-    redirect(`/boards/${boardId}?error=${encodeURIComponent(error.message)}`);
+  const rl = checkRateLimit(`deleteTask:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) {
+    redirect(`/boards/${boardId}?error=${encodeURIComponent("Too many requests.")}`);
   }
 
-  revalidatePath(`/boards/${boardId}`);
+  try {
+    await removeTask(id);
+  } catch (err) {
+    redirect(`/boards/${boardId}?error=${encodeURIComponent(toUserMessage(err))}`);
+  }
+
+  invalidateBoardTasks(boardId);
 }

@@ -1,17 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getUserBoards } from "@/lib/db/boards";
 import { AppHeader } from "@/components/AppHeader";
 import { CreateBoardForm } from "@/components/CreateBoardForm";
 import { deleteBoard } from "./actions";
-import type { Board } from "@/lib/supabase/types";
 
 export default async function DashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  // Only delete-board errors arrive via URL (it's a redirect-based action).
   const { error: deleteError } = await searchParams;
 
   const supabase = await createClient();
@@ -21,13 +20,7 @@ export default async function DashboardPage({
 
   if (!user) redirect("/login");
 
-  const { data: boards } = await supabase
-    .from("boards")
-    .select("id, user_id, title, created_at")
-    .order("created_at", { ascending: false })
-    .returns<Board[]>();
-
-  const boardList = boards ?? [];
+  const boards = await getUserBoards(user.id);
 
   return (
     <div className="flex flex-1 flex-col bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-950 dark:to-zinc-900">
@@ -55,7 +48,7 @@ export default async function DashboardPage({
           ) : null}
         </div>
 
-        {boardList.length === 0 ? (
+        {boards.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-zinc-300 bg-white/50 p-12 text-center dark:border-zinc-700 dark:bg-zinc-900/30">
             <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               No boards yet
@@ -66,7 +59,7 @@ export default async function DashboardPage({
           </div>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {boardList.map((board) => (
+            {boards.map((board) => (
               <li
                 key={board.id}
                 className="group relative flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getBoardById } from "@/lib/db/boards";
+import { getBoardTasks } from "@/lib/db/tasks";
 import { AppHeader } from "@/components/AppHeader";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
-import type { Board, Task } from "@/lib/supabase/types";
 
 export default async function BoardPage({
   params,
@@ -13,7 +14,6 @@ export default async function BoardPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
-  // Only delete-task errors arrive via URL (it's a redirect-based action).
   const { error: deleteError } = await searchParams;
 
   const supabase = await createClient();
@@ -23,20 +23,12 @@ export default async function BoardPage({
 
   if (!user) redirect("/login");
 
-  const { data: board } = await supabase
-    .from("boards")
-    .select("id, user_id, title, created_at")
-    .eq("id", id)
-    .maybeSingle<Board>();
+  const [board, tasks] = await Promise.all([
+    getBoardById(id),
+    getBoardTasks(id),
+  ]);
 
   if (!board) notFound();
-
-  const { data: tasks } = await supabase
-    .from("tasks")
-    .select("id, board_id, user_id, title, description, status, position, created_at")
-    .eq("board_id", id)
-    .order("position", { ascending: true })
-    .returns<Task[]>();
 
   return (
     <div className="flex flex-1 flex-col bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-950 dark:to-zinc-900">
@@ -62,7 +54,7 @@ export default async function BoardPage({
           </p>
         ) : null}
 
-        <KanbanBoard boardId={board.id} initialTasks={tasks ?? []} />
+        <KanbanBoard boardId={board.id} initialTasks={tasks} />
       </main>
     </div>
   );

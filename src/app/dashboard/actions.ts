@@ -1,8 +1,14 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/supabase/auth";
+import {
+  insertBoard,
+  removeBoard,
+  invalidateUserBoards,
+} from "@/lib/db/boards";
+import { checkRateLimit, MUTATION_LIMIT } from "@/lib/rate-limit";
+import { toUserMessage } from "@/lib/errors";
 
 export type BoardActionState = { error: string } | null;
 
@@ -13,15 +19,18 @@ export async function createBoard(
   const title = String(formData.get("title") ?? "").trim();
   if (!title) return { error: "Board title is required." };
 
-  const { supabase, user } = await requireUser();
+  const { user } = await requireUser();
 
-  const { error } = await supabase
-    .from("boards")
-    .insert({ title, user_id: user.id });
+  const rl = checkRateLimit(`createBoard:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) return { error: "Too many requests. Please slow down." };
 
-  if (error) return { error: error.message };
+  try {
+    await insertBoard(user.id, title);
+  } catch (err) {
+    return { error: toUserMessage(err) };
+  }
 
-  revalidatePath("/dashboard");
+  invalidateUserBoards(user.id);
   redirect("/dashboard");
 }
 
@@ -29,14 +38,19 @@ export async function deleteBoard(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   if (!id) redirect("/dashboard");
 
-  const { supabase } = await requireUser();
+  const { user } = await requireUser();
 
-  const { error } = await supabase.from("boards").delete().eq("id", id);
-
-  if (error) {
-    redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
+  const rl = checkRateLimit(`deleteBoard:${user.id}`, MUTATION_LIMIT);
+  if (!rl.allowed) {
+    redirect(`/dashboard?error=${encodeURIComponent("Too many requests. Please slow down.")}`);
   }
 
-  revalidatePath("/dashboard");
+  try {
+    await removeBoard(id);
+  } catch (err) {
+    redirect(`/dashboard?error=${encodeURIComponent(toUserMessage(err))}`);
+  }
+
+  invalidateUserBoards(user.id);
   redirect("/dashboard");
 }
