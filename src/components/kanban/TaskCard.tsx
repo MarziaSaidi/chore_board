@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { deleteTask, updateTask } from "@/app/boards/[id]/actions";
-import type { Task, TaskStatus } from "@/lib/supabase/types";
+import type { BoardMember, Task, TaskStatus } from "@/lib/supabase/types";
 import { Alert, Button, Input, Select, StatusBadge, Textarea } from "@/components/ui";
 
 // ── Icons ──────────────────────────────────────────────────────────
@@ -47,10 +47,12 @@ const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
 function EditForm({
   task,
   boardId,
+  members,
   onClose,
 }: {
   task: Task;
   boardId: string;
+  members: BoardMember[];
   onClose: () => void;
 }) {
   const [state, action] = useActionState(updateTask, null);
@@ -94,6 +96,24 @@ function EditForm({
         />
       </div>
 
+      {members.length > 0 && (
+        <div className="mb-3">
+          <label className="mb-1 block text-xs text-zinc-500 dark:text-zinc-400">Assignee</label>
+          <select
+            name="assignee_id"
+            defaultValue={task.assignee_id ?? ""}
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+          >
+            <option value="">Unassigned</option>
+            {members.map((m) => (
+              <option key={m.user_id} value={m.user_id}>
+                {m.profile.full_name ?? m.profile.email}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="flex gap-2">
         <Button type="submit" size="sm">Save</Button>
         <Button type="button" variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
@@ -104,9 +124,10 @@ function EditForm({
 
 // ── Shared card content ────────────────────────────────────────────
 
-function CardContent({ task, boardId, onEdit, dragHandleProps }: {
+function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
   task: Task;
   boardId: string;
+  members?: BoardMember[];
   onEdit: () => void;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
 }) {
@@ -167,6 +188,30 @@ function CardContent({ task, boardId, onEdit, dragHandleProps }: {
         </p>
       ) : null}
 
+      {task.assignee_id && members && (() => {
+        const assignee = members.find((m) => m.user_id === task.assignee_id)?.profile;
+        if (!assignee) return null;
+        const initials = (assignee.full_name ?? assignee.email)
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+        return (
+          <div className="mt-2 flex items-center gap-1.5">
+            <span
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
+              title={assignee.full_name ?? assignee.email}
+            >
+              {initials}
+            </span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              {assignee.full_name ?? assignee.email}
+            </span>
+          </div>
+        );
+      })()}
+
       <div className="mt-3 space-y-1.5">
         <StatusBadge status={task.status} />
 
@@ -199,7 +244,7 @@ function CardContent({ task, boardId, onEdit, dragHandleProps }: {
 
 // ── Sortable card (used inside columns) ───────────────────────────
 
-export function TaskCard({ task, boardId }: { task: Task; boardId: string }) {
+export function TaskCard({ task, boardId, members }: { task: Task; boardId: string; members: BoardMember[] }) {
   const [editing, setEditing] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id });
@@ -213,7 +258,7 @@ export function TaskCard({ task, boardId }: { task: Task; boardId: string }) {
   if (editing) {
     return (
       <div ref={setNodeRef} style={style}>
-        <EditForm task={task} boardId={boardId} onClose={() => setEditing(false)} />
+        <EditForm task={task} boardId={boardId} members={members} onClose={() => setEditing(false)} />
       </div>
     );
   }
@@ -223,7 +268,8 @@ export function TaskCard({ task, boardId }: { task: Task; boardId: string }) {
       <CardContent
         task={task}
         boardId={boardId}
-        onEdit={() => setEditing(false)}
+        members={members}
+        onEdit={() => setEditing(true)}
         dragHandleProps={{ ...attributes, ...listeners }}
       />
     </div>
