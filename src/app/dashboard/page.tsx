@@ -5,6 +5,23 @@ import { getUserBoards } from "@/lib/db/boards";
 import { AppHeader } from "@/components/AppHeader";
 import { CreateBoardForm } from "@/components/CreateBoardForm";
 import { deleteBoard } from "./actions";
+import { Alert, Card, EmptyState } from "@/components/ui";
+
+function BoardsIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-10 w-10" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+      <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" />
+    </svg>
+  );
+}
 
 export default async function DashboardPage({
   searchParams,
@@ -14,10 +31,7 @@ export default async function DashboardPage({
   const { error: deleteError } = await searchParams;
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const boards = await getUserBoards(user.id);
@@ -36,39 +50,32 @@ export default async function DashboardPage({
           </p>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-8 space-y-3">
           <CreateBoardForm />
           {deleteError ? (
-            <p
-              role="alert"
-              className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300"
-            >
-              {deleteError}
-            </p>
+            <Alert variant="error">{deleteError}</Alert>
           ) : null}
         </div>
 
         {boards.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-300 bg-white/50 p-12 text-center dark:border-zinc-700 dark:bg-zinc-900/30">
-            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              No boards yet
-            </p>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
-              Use the field above to create your first board.
-            </p>
-          </div>
+          <EmptyState
+            icon={<BoardsIcon />}
+            title="No boards yet"
+            description="Use the field above to create your first board."
+          />
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {boards.map((board) => (
-              <li
+              <Card
                 key={board.id}
-                className="group relative flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+                as="li"
+                className="group relative flex flex-col justify-between p-5 transition-shadow hover:shadow-md"
               >
                 <Link href={`/boards/${board.id}`} className="block">
                   <h2 className="pr-8 text-base font-semibold text-zinc-900 dark:text-zinc-50">
                     {board.title}
                   </h2>
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
+                  <p className="mt-1 text-xs text-zinc-500">
                     Created{" "}
                     {new Date(board.created_at).toLocaleDateString(undefined, {
                       month: "short",
@@ -77,29 +84,19 @@ export default async function DashboardPage({
                     })}
                   </p>
                 </Link>
+
                 <form action={deleteBoard} className="absolute right-3 top-3">
                   <input type="hidden" name="id" value={board.id} />
                   <button
                     type="submit"
-                    aria-label={`Delete board ${board.title}`}
+                    aria-label={`Delete board "${board.title}"`}
                     title="Delete board"
                     className="rounded-md p-1.5 text-zinc-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 focus:opacity-100 group-hover:opacity-100 dark:hover:bg-red-950/50"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <TrashIcon />
                   </button>
                 </form>
-              </li>
+              </Card>
             ))}
           </ul>
         )}
