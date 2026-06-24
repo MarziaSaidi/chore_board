@@ -23,7 +23,7 @@ import { useRealtimeTasks } from "@/hooks/useRealtimeTasks";
 import { moveTask } from "@/app/boards/[id]/actions";
 import { AddTaskForm } from "./AddTaskForm";
 import { TaskCard, TaskCardDragOverlay } from "./TaskCard";
-import type { Task, TaskStatus } from "@/lib/supabase/types";
+import type { BoardMember, Task, TaskStatus } from "@/lib/supabase/types";
 
 const COLUMNS: { status: TaskStatus; label: string }[] = [
   { status: "todo",        label: "To Do"       },
@@ -55,11 +55,13 @@ function DroppableColumn({
   label,
   tasks,
   boardId,
+  members,
 }: {
   status: TaskStatus;
   label: string;
   tasks: Task[];
   boardId: string;
+  members: BoardMember[];
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -89,13 +91,13 @@ function DroppableColumn({
           ].filter(Boolean).join(" ")}
         >
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} boardId={boardId} />
+            <TaskCard key={task.id} task={task} boardId={boardId} members={members} />
           ))}
         </div>
       </SortableContext>
 
       <div className="mt-3">
-        <AddTaskForm boardId={boardId} status={status} />
+        <AddTaskForm boardId={boardId} status={status} members={members} />
       </div>
     </section>
   );
@@ -106,9 +108,11 @@ function DroppableColumn({
 export function KanbanBoard({
   boardId,
   initialTasks,
+  members,
 }: {
   boardId: string;
   initialTasks: Task[];
+  members: BoardMember[];
 }) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -195,6 +199,7 @@ export function KanbanBoard({
               label={column.label}
               tasks={columnTasks}
               boardId={boardId}
+              members={members}
             />
           );
         })}
