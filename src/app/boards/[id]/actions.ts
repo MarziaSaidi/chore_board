@@ -48,8 +48,9 @@ export async function createTask(
   if (!rl.allowed) return { error: "Too many requests. Please slow down." };
 
   try {
+    const assigneeId = formData.get("assignee_id") as string | null;
     const position = await getNextPosition(boardId);
-    await insertTask({ boardId, userId: user.id, title, status, position });
+    await insertTask({ boardId, userId: user.id, title, status, position, assigneeId: assigneeId || null });
   } catch (err) {
     return { error: toUserMessage(err) };
   }
@@ -67,7 +68,7 @@ export async function updateTask(
 
   if (!id || !boardId) redirect(`/boards/${boardId || ""}`);
 
-  type TaskUpdate = { title?: string; description?: string; status?: TaskStatus };
+  type TaskUpdate = { title?: string; description?: string; status?: TaskStatus; assigneeId?: string | null };
   const update: TaskUpdate = {};
 
   if (formData.has("title")) {
@@ -77,6 +78,9 @@ export async function updateTask(
   }
   if (formData.has("description")) {
     update.description = String(formData.get("description")).trim();
+  }
+  if (formData.has("assignee_id")) {
+    update.assigneeId = (formData.get("assignee_id") as string) || null;
   }
   if (formData.has("status")) {
     try {
