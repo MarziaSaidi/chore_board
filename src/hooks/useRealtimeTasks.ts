@@ -1,15 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Task } from "@/lib/supabase/types";
 
-export function useRealtimeTasks(boardId: string, initialTasks: Task[]): Task[] {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-
-  // Sync if the server re-renders with fresh initialTasks (after revalidatePath)
-  useEffect(() => {
-    setTasks(initialTasks);
-  }, [initialTasks]);
-
+export function useRealtimeTasks(
+  boardId: string,
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>,
+) {
   useEffect(() => {
     const supabase = createClient();
 
@@ -47,7 +43,5 @@ export function useRealtimeTasks(boardId: string, initialTasks: Task[]): Task[] 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [boardId]);
-
-  return tasks;
+  }, [boardId, setTasks]);
 }
