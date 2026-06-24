@@ -11,15 +11,15 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const { error } = await searchParams;
+  // Only delete-board errors arrive via URL (it's a redirect-based action).
+  const { error: deleteError } = await searchParams;
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   const { data: boards } = await supabase
     .from("boards")
@@ -45,9 +45,12 @@ export default async function DashboardPage({
 
         <div className="mb-8">
           <CreateBoardForm />
-          {error ? (
-            <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
-              {error}
+          {deleteError ? (
+            <p
+              role="alert"
+              className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300"
+            >
+              {deleteError}
             </p>
           ) : null}
         </div>
