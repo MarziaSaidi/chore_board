@@ -38,6 +38,7 @@ export type InsertTaskPayload = {
   title: string;
   status: TaskStatus;
   position: number;
+  assigneeId?: string | null;
 };
 
 export async function insertTask(payload: InsertTaskPayload): Promise<Task> {
@@ -50,8 +51,9 @@ export async function insertTask(payload: InsertTaskPayload): Promise<Task> {
       title: payload.title,
       status: payload.status,
       position: payload.position,
+      assignee_id: payload.assigneeId ?? null,
     })
-    .select("id, board_id, user_id, title, description, status, position, created_at")
+    .select("id, board_id, user_id, title, description, status, position, assignee_id, created_at")
     .single<Task>();
 
   if (error) throw new Error(error.message);
@@ -63,11 +65,15 @@ export type UpdateTaskPayload = {
   description?: string;
   status?: TaskStatus;
   position?: number;
+  assigneeId?: string | null;
 };
 
 export async function patchTask(taskId: string, update: UpdateTaskPayload): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from("tasks").update(update).eq("id", taskId);
+  const { assigneeId, ...rest } = update;
+  const payload: Record<string, unknown> = { ...rest };
+  if ("assigneeId" in update) payload.assignee_id = assigneeId ?? null;
+  const { error } = await supabase.from("tasks").update(payload).eq("id", taskId);
   if (error) throw new Error(error.message);
 }
 
