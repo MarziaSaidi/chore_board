@@ -7,16 +7,15 @@ import { useFormField } from "./form-field";
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const baseClasses = [
-  "w-full rounded-lg border bg-white px-3 py-2 text-sm text-zinc-900",
-  "placeholder:text-zinc-400",
+  "w-full rounded-xl border-2 bg-[#faf4e8] px-3 py-2 text-sm text-[#2c1f14]",
+  "placeholder:text-[#9e8870]",
   "transition-colors duration-150",
   "focus:outline-none focus:ring-2 focus:ring-offset-0",
   "disabled:cursor-not-allowed disabled:opacity-60",
-  "dark:bg-zinc-800 dark:text-zinc-100",
 ].join(" ");
 
-const normalBorder = "border-zinc-300 focus:border-indigo-500 focus:ring-indigo-500/30 dark:border-zinc-700";
-const errorBorder  = "border-red-400 focus:border-red-500 focus:ring-red-500/30 dark:border-red-600";
+const normalBorder = "border-[#ede0c4] focus:border-[#4a7a52] focus:ring-[#4a7a52]/20";
+const errorBorder  = "border-red-400 focus:border-red-500 focus:ring-red-500/30";
 
 /**
  * Single-line text input. Automatically wires id, aria-invalid, and
