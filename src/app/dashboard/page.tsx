@@ -37,15 +37,15 @@ export default async function DashboardPage({
   const boards = await getUserBoards(user.id);
 
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-950 dark:to-zinc-900">
+    <div className="flex flex-1 flex-col" style={{ background: "linear-gradient(160deg, #eef4e8 0%, #f5f0e8 50%, #ede8d8 100%)" }}>
       <AppHeader email={user.email} />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 style={{ fontFamily: "var(--font-kalam), cursive", fontSize: "1.9rem", fontWeight: 700, color: "#2d3a20" }}>
             Your boards
           </h1>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-sm" style={{ color: "#7a6a56" }}>
             Create a board to start organizing tasks.
           </p>
         </div>
