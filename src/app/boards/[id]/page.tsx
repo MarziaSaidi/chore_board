@@ -34,19 +34,19 @@ export default async function BoardPage({
   if (!board) notFound();
 
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-950 dark:to-zinc-900">
+    <div className="flex flex-1 flex-col" style={{ background: "var(--background)" }}>
       <AppHeader email={user.email} />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         <Link
           href="/dashboard"
-          className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+          className="text-sm font-bold underline" style={{ color: "var(--foreground)" }}
         >
           ← Back to boards
         </Link>
 
         <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--foreground)" }}>
             {board.title}
           </h1>
 
@@ -64,14 +64,15 @@ export default async function BoardPage({
                 <span
                   key={m.user_id}
                   title={display}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 ring-2 ring-white dark:bg-indigo-900 dark:text-indigo-300 dark:ring-zinc-900"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold"
+                  style={{ background: "var(--primary)", color: "var(--primary-foreground)", borderColor: "var(--primary-border)" }}
                 >
                   {initials}
                 </span>
               );
             })}
             {members.length > 5 && (
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium text-zinc-600 ring-2 ring-white dark:bg-zinc-700 dark:text-zinc-300 dark:ring-zinc-900">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold" style={{ background: "var(--muted)", color: "var(--muted-foreground)", borderColor: "var(--border)" }}>
                 +{members.length - 5}
               </span>
             )}
@@ -81,7 +82,7 @@ export default async function BoardPage({
         {deleteError ? (
           <p
             role="alert"
-            className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300"
+            className="mt-4 rounded-[var(--radius)] border-2 px-4 py-2.5 text-sm font-bold" style={{ background: "oklch(0.95 0.04 29)", color: "var(--destructive)", borderColor: "var(--destructive-border)" }}
           >
             {deleteError}
           </p>
