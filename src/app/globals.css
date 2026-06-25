@@ -1,26 +1,131 @@
 @import "tailwindcss";
 
+/* ── Matsu / Ghibli design tokens ─────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Matsu theme palette */
+  --background:        #f5f0e8;   /* warm parchment */
+  --foreground:        #2d2416;   /* deep ink brown */
+
+  --card:              #faf6ee;
+  --card-foreground:   #2d2416;
+
+  --primary:           #4a7c59;   /* forest green */
+  --primary-foreground:#f5f0e8;
+
+  --secondary:         #c8b99a;   /* warm sand */
+  --secondary-foreground: #2d2416;
+
+  --muted:             #e8e0d0;
+  --muted-foreground:  #7a6a56;
+
+  --accent:            #d4956a;   /* warm amber */
+  --accent-foreground: #fff8f0;
+
+  --border:            #d6c9b4;
+  --input-bg:          #fdf9f3;
+
+  --destructive:       #c0392b;
+
+  /* Ghibli sky gradient stops */
+  --sky-top:    #7ab5cc;
+  --sky-mid:    #a0c8b8;
+  --sky-ground: #c8b88a;
+
+  /* Typography */
+  --font-display: var(--font-kalam), 'Comic Sans MS', cursive;
+  --font-body:    var(--font-quicksand), system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans:    var(--font-body);
+  --font-display: var(--font-display);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* ── Animations ────────────────────────────────────────────────────── */
+@keyframes drift-right {
+  0%   { transform: translateX(-160px); }
+  100% { transform: translateX(calc(100vw + 160px)); }
+}
+@keyframes drift-slow {
+  0%   { transform: translateX(-200px); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50%       { transform: rotate(2deg);  }
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-6px); }
+}
+
+.animate-drift      { animation: drift-right 44s linear infinite; }
+.animate-drift-slow { animation: drift-slow  66s linear infinite; }
+.animate-sway       { animation: sway 3.5s ease-in-out infinite; transform-origin: bottom center; }
+.animate-float-up   { animation: float-up 0.7s ease-out both; }
+.animate-bob        { animation: bob 4s ease-in-out infinite; }
+
+/* ── Matsu card ────────────────────────────────────────────────────── */
+.matsu-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 1.75rem;
+  box-shadow:
+    0 2px 4px rgba(45,36,22,0.06),
+    0 16px 40px rgba(45,36,22,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+/* ── Matsu buttons ─────────────────────────────────────────────────── */
+.matsu-btn-primary {
+  display: block;
+  width: 100%;
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 2px solid #3a6147;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  cursor: pointer;
+}
+.matsu-btn-primary:hover {
+  background: #5c9470;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74,124,89,0.35);
+}
+
+.matsu-btn-secondary {
+  display: block;
+  width: 100%;
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  transition: background 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.matsu-btn-secondary:hover {
+  background: rgba(74,124,89,0.09);
+  transform: translateY(-2px);
 }
