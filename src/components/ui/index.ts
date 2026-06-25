@@ -29,3 +29,5 @@ export {
 export { EmptyState } from "./empty-state";
 
 export { Card } from "./card";
+
+export { Avatar } from "./avatar";

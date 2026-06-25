@@ -4,25 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { inviteMember, removeMember } from "@/app/boards/[id]/members-actions";
 import type { BoardMember } from "@/lib/supabase/types";
-import { Alert, Button, Input } from "@/components/ui";
-
-function getInitials(name: string): string {
-  return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
-}
-
-function Avatar({ profile }: { profile: BoardMember["profile"] }) {
-  const display = profile.full_name ?? profile.email;
-  return (
-    <span
-      title={display}
-      aria-label={display}
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold"
-      style={{ background: "var(--primary)", color: "var(--primary-foreground)", borderColor: "var(--primary-border)" }}
-    >
-      {getInitials(display)}
-    </span>
-  );
-}
+import { Alert, Avatar, Button, Input } from "@/components/ui";
 
 function InviteButton() {
   const { pending } = useFormStatus();
@@ -62,7 +44,7 @@ export function MembersPanel({ boardId, members, ownerId, currentUserId }: {
           return (
             <li key={m.user_id} className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <Avatar profile={m.profile} />
+                <Avatar seed={m.profile.email} size={32} title={display} />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold" style={{ color: "var(--foreground)" }}>{display}</p>
                   <p className="truncate text-xs" style={{ color: "var(--muted-foreground)" }}>{m.profile.email}</p>
