@@ -11,25 +11,23 @@ type Size = "sm" | "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
   primary: [
-    "bg-indigo-600 text-white",
-    "hover:bg-indigo-500",
-    "focus-visible:ring-indigo-500",
+    "bg-[#4a7a52] text-[#f5edd8] border-2 border-[#3a6140]",
+    "hover:bg-[#5a8a62]",
+    "focus-visible:ring-[#4a7a52]",
   ].join(" "),
   secondary: [
-    "border border-zinc-300 bg-white text-zinc-700",
-    "hover:bg-zinc-50",
-    "dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700",
-    "focus-visible:ring-zinc-400",
+    "border-2 border-[#4a7a52] bg-transparent text-[#4a7a52]",
+    "hover:bg-[#4a7a52]/10",
+    "focus-visible:ring-[#4a7a52]",
   ].join(" "),
   ghost: [
-    "text-zinc-600",
-    "hover:bg-zinc-100 hover:text-zinc-900",
-    "dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100",
-    "focus-visible:ring-zinc-400",
+    "text-[#6b5744]",
+    "hover:bg-[#4a7a52]/10 hover:text-[#2c1f14]",
+    "focus-visible:ring-[#4a7a52]",
   ].join(" "),
   danger: [
-    "bg-red-600 text-white",
-    "hover:bg-red-500",
+    "bg-red-700 text-white border-2 border-red-800",
+    "hover:bg-red-600",
     "focus-visible:ring-red-500",
   ].join(" "),
 };
@@ -89,8 +87,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={cn(
-        "inline-flex items-center justify-center rounded-lg font-medium",
-        "transition-colors duration-150",
+        "inline-flex items-center justify-center rounded-xl font-semibold",
+        "transition-all duration-150",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "dark:focus-visible:ring-offset-zinc-900",
         "disabled:cursor-not-allowed disabled:opacity-60",
