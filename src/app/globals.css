@@ -118,6 +118,10 @@ body {
 .animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
 
 /* ── Family scene login animations ───────────────────────────────── */
+.family-scene--compact {
+  max-height: 100%;
+}
+
 @keyframes family-bob {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-4px); }
