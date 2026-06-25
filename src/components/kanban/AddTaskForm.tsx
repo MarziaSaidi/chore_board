@@ -13,7 +13,8 @@ function AddButton() {
     <button
       type="submit"
       disabled={pending}
-      className="flex w-full items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-left text-sm text-zinc-500 transition-colors hover:border-indigo-400 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-indigo-500 dark:hover:text-indigo-400"
+      className="flex w-full items-center gap-1.5 rounded-[var(--radius)] border-2 border-dashed px-3 py-2 text-left text-sm font-bold transition-colors focus:outline-none disabled:opacity-60"
+      style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
     >
       {pending ? <Spinner size="xs" /> : <span aria-hidden="true">+</span>}
       {pending ? "Adding…" : "Add a task"}
@@ -21,23 +22,15 @@ function AddButton() {
   );
 }
 
-export function AddTaskForm({
-  boardId,
-  status,
-  members,
-}: {
-  boardId: string;
-  status: TaskStatus;
-  members: BoardMember[];
+export function AddTaskForm({ boardId, status, members }: {
+  boardId: string; status: TaskStatus; members: BoardMember[];
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [state, action] = useActionState(createTask, null);
 
   const prevStateRef = useRef(state);
   useEffect(() => {
-    if (prevStateRef.current !== null && state === null) {
-      formRef.current?.reset();
-    }
+    if (prevStateRef.current !== null && state === null) formRef.current?.reset();
     prevStateRef.current = state;
   }, [state]);
 
@@ -57,7 +50,8 @@ export function AddTaskForm({
         <select
           name="assignee_id"
           aria-label="Assign to"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+          className="w-full rounded-[var(--radius)] border-2 px-3 py-1.5 text-xs font-bold focus:outline-none"
+          style={{ background: "var(--card)", color: "var(--foreground)", borderColor: "var(--input)", boxShadow: "0 2px 0 0 var(--border)" }}
         >
           <option value="">Unassigned</option>
           {members.map((m) => (
@@ -68,11 +62,7 @@ export function AddTaskForm({
         </select>
       )}
       <AddButton />
-      {state?.error ? (
-        <Alert variant="error" className="py-2 text-xs">
-          {state.error}
-        </Alert>
-      ) : null}
+      {state?.error ? <Alert variant="error" className="py-2 text-xs">{state.error}</Alert> : null}
     </form>
   );
 }
