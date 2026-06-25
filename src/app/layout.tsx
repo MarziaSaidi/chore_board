@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import { Kalam, Quicksand } from "next/font/google";
+import { Nunito, Kalam } from "next/font/google";
 import "./globals.css";
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const kalam = Kalam({
   variable: "--font-kalam",
   subsets: ["latin"],
-  weight: ["300", "400", "700"],
-  display: "swap",
-});
-
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -29,9 +28,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${kalam.variable} ${quicksand.variable} h-full antialiased`}
+      className={`${nunito.variable} ${kalam.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Matsu watercolor texture overlay */}
+        <div className="texture" aria-hidden="true" />
+        {children}
+      </body>
     </html>
   );
 }

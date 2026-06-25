@@ -15,15 +15,25 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-200 px-4 py-16 dark:from-zinc-950 dark:to-zinc-900">
+    <div
+      className="flex flex-1 items-center justify-center px-4 py-16"
+      style={{ background: "var(--background)" }}
+    >
       <div className="text-center">
-        <p className="text-4xl font-bold text-zinc-300 dark:text-zinc-700" aria-hidden="true">
+        <p
+          className="text-4xl font-bold"
+          style={{ fontFamily: "var(--font-serif)", color: "var(--muted-foreground)" }}
+          aria-hidden="true"
+        >
           500
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+        <h2
+          className="mt-2 text-lg font-bold"
+          style={{ fontFamily: "var(--font-serif)", color: "var(--foreground)" }}
+        >
           Something went wrong
         </h2>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm" style={{ color: "var(--muted-foreground)" }}>
           An unexpected error occurred. Please try again.
         </p>
         <Button onClick={reset} className="mt-6">

@@ -6,32 +6,8 @@ import { useFormField } from "./form-field";
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-const baseClasses = [
-  "w-full rounded-xl border-2 bg-[#faf4e8] px-3 py-2 text-sm text-[#2c1f14]",
-  "placeholder:text-[#9e8870]",
-  "transition-colors duration-150",
-  "focus:outline-none focus:ring-2 focus:ring-offset-0",
-  "disabled:cursor-not-allowed disabled:opacity-60",
-].join(" ");
-
-const normalBorder = "border-[#ede0c4] focus:border-[#4a7a52] focus:ring-[#4a7a52]/20";
-const errorBorder  = "border-red-400 focus:border-red-500 focus:ring-red-500/30";
-
-/**
- * Single-line text input. Automatically wires id, aria-invalid, and
- * aria-describedby when rendered inside a <FormField>.
- *
- * @example
- * // Standalone
- * <Input name="search" placeholder="Search…" />
- *
- * // Inside FormField (id + aria auto-wired)
- * <FormField label="Email" error={err}>
- *   <Input name="email" type="email" />
- * </FormField>
- */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { className, ...props },
+  { className, style, ...props },
   ref,
 ) {
   const field = useFormField();
@@ -45,10 +21,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         field?.hasError ? field.errorId : field?.hintId ?? undefined
       }
       className={cn(
-        baseClasses,
-        field?.hasError ? errorBorder : normalBorder,
+        "w-full rounded-[var(--radius)] border-2 px-3 py-2 text-sm font-bold",
+        "transition-all duration-150",
+        "placeholder:font-normal",
+        "focus:outline-none focus:ring-2 focus:ring-offset-0",
+        "disabled:cursor-not-allowed disabled:opacity-60",
         className,
       )}
+      style={{
+        background: "var(--card)",
+        color: "var(--foreground)",
+        borderColor: field?.hasError ? "var(--destructive)" : "var(--input)",
+        boxShadow: field?.hasError
+          ? "0 2px 0 0 var(--destructive-border)"
+          : "0 2px 0 0 var(--border)",
+        "--tw-ring-color": "var(--ring)",
+        ...style,
+      } as React.CSSProperties}
       {...props}
     />
   );

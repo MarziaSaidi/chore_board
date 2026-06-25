@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { createTask } from "@/app/boards/[id]/actions";
 import type { BoardMember, TaskStatus } from "@/lib/supabase/types";
-import { Alert, Input, Spinner } from "@/components/ui";
+import { Alert, Input, Select, Spinner } from "@/components/ui";
 
 function AddButton() {
   const { pending } = useFormStatus();
@@ -47,19 +47,14 @@ export function AddTaskForm({ boardId, status, members }: {
         aria-label={`Add task to ${status.replace("_", " ")} column`}
       />
       {members.length > 0 && (
-        <select
-          name="assignee_id"
-          aria-label="Assign to"
-          className="w-full rounded-[var(--radius)] border-2 px-3 py-1.5 text-xs font-bold focus:outline-none"
-          style={{ background: "var(--card)", color: "var(--foreground)", borderColor: "var(--input)", boxShadow: "0 2px 0 0 var(--border)" }}
-        >
+        <Select name="assignee_id" aria-label="Assign to" className="text-xs">
           <option value="">Unassigned</option>
           {members.map((m) => (
             <option key={m.user_id} value={m.user_id}>
               {m.profile.full_name ?? m.profile.email}
             </option>
           ))}
-        </select>
+        </Select>
       )}
       <AddButton />
       {state?.error ? <Alert variant="error" className="py-2 text-xs">{state.error}</Alert> : null}

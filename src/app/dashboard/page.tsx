@@ -37,15 +37,15 @@ export default async function DashboardPage({
   const boards = await getUserBoards(user.id);
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "linear-gradient(160deg, #eef4e8 0%, #f5f0e8 50%, #ede8d8 100%)" }}>
+    <div className="flex flex-1 flex-col" style={{ background: "var(--background)" }}>
       <AppHeader email={user.email} />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
         <div className="mb-8">
-          <h1 style={{ fontFamily: "var(--font-kalam), cursive", fontSize: "1.9rem", fontWeight: 700, color: "#2d3a20" }}>
+          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.9rem", fontWeight: 700, color: "var(--foreground)" }}>
             Your boards
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "#7a6a56" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted-foreground)" }}>
             Create a board to start organizing tasks.
           </p>
         </div>
@@ -72,10 +72,10 @@ export default async function DashboardPage({
                 className="group relative flex flex-col justify-between p-5 transition-shadow hover:shadow-md"
               >
                 <Link href={`/boards/${board.id}`} className="block">
-                  <h2 className="pr-8 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+                  <h2 className="pr-8 text-base font-bold" style={{ color: "var(--foreground)" }}>
                     {board.title}
                   </h2>
-                  <p className="mt-1 text-xs text-zinc-500">
+                  <p className="mt-1 text-xs" style={{ color: "var(--muted-foreground)" }}>
                     Created{" "}
                     {new Date(board.created_at).toLocaleDateString(undefined, {
                       month: "short",
@@ -91,7 +91,8 @@ export default async function DashboardPage({
                     type="submit"
                     aria-label={`Delete board "${board.title}"`}
                     title="Delete board"
-                    className="rounded-md p-1.5 text-zinc-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 focus:opacity-100 group-hover:opacity-100 dark:hover:bg-red-950/50"
+                    className="rounded-[var(--radius)] p-1.5 opacity-0 transition hover:opacity-100 focus:opacity-100 group-hover:opacity-100"
+                    style={{ color: "var(--muted-foreground)" }}
                   >
                     <TrashIcon />
                   </button>

@@ -56,12 +56,12 @@ export function LoginForm({ urlError }: { urlError?: string }) {
         <SubmitButton />
       </form>
 
-      <p className="mt-6 text-center text-sm" style={{ color: "#6b5744" }}>
+      <p className="mt-6 text-center text-sm" style={{ color: "var(--muted-foreground)" }}>
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="font-semibold underline"
-          style={{ color: "#4a7a52" }}
+          className="underline"
+          style={{ color: "var(--foreground)" }}
         >
           Sign up
         </Link>

@@ -1,131 +1,118 @@
 @import "tailwindcss";
 
-/* ── Matsu / Ghibli design tokens ─────────────────────────────────── */
+/* ── Exact Matsu Theme CSS Variables ──────────────────────────────── */
 :root {
-  /* Matsu theme palette */
-  --background:        #f5f0e8;   /* warm parchment */
-  --foreground:        #2d2416;   /* deep ink brown */
+  --background:            oklch(0.91 0.048 83.6);
+  --foreground:            oklch(0.41 0.077 78.9);
+  --card:                  oklch(0.92 0.042 83.6);
+  --card-foreground:       oklch(0.41 0.077 74.3);
+  --popover:               oklch(0.92 0.042 83.6);
+  --popover-foreground:    oklch(0.41 0.077 74.3);
+  --primary:               oklch(0.71 0.097 111.7);
+  --primary-foreground:    oklch(0.98 0.005 0);
+  --primary-border:        oklch(0.59 0.096 111.8);
+  --secondary:             oklch(0.88 0.055 83.6);
+  --secondary-foreground:  oklch(0.51 0.077 78.9);
+  --muted:                 oklch(0.86 0.064 83.7);
+  --muted-foreground:      oklch(0.51 0.077 74.3);
+  --accent:                oklch(0.86 0.055 83.6);
+  --accent-foreground:     oklch(0.26 0.016 0);
+  --destructive:           oklch(0.63 0.24 29.2);
+  --destructive-foreground:oklch(0.97 0.018 0);
+  --destructive-border:    oklch(0.43 0.24 29.2);
+  --border:                oklch(0.74 0.063 80.8);
+  --input:                 oklch(0.74 0.063 80.8);
+  --ring:                  oklch(0.51 0.077 74.3);
+  --radius:                0.625rem;
 
-  --card:              #faf6ee;
-  --card-foreground:   #2d2416;
-
-  --primary:           #4a7c59;   /* forest green */
-  --primary-foreground:#f5f0e8;
-
-  --secondary:         #c8b99a;   /* warm sand */
-  --secondary-foreground: #2d2416;
-
-  --muted:             #e8e0d0;
-  --muted-foreground:  #7a6a56;
-
-  --accent:            #d4956a;   /* warm amber */
-  --accent-foreground: #fff8f0;
-
-  --border:            #d6c9b4;
-  --input-bg:          #fdf9f3;
-
-  --destructive:       #c0392b;
-
-  /* Ghibli sky gradient stops */
-  --sky-top:    #7ab5cc;
-  --sky-mid:    #a0c8b8;
-  --sky-ground: #c8b88a;
-
-  /* Typography */
-  --font-display: var(--font-kalam), 'Comic Sans MS', cursive;
-  --font-body:    var(--font-quicksand), system-ui, sans-serif;
+  --font-sans:   var(--font-nunito), Nunito, sans-serif;
+  --font-serif:  var(--font-kalam), "Kalam", cursive;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans:    var(--font-body);
-  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
+/* ── Base ─────────────────────────────────────────────────────────── */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
+  font-weight: 700;
 }
 
-/* ── Animations ────────────────────────────────────────────────────── */
-@keyframes drift-right {
-  0%   { transform: translateX(-160px); }
-  100% { transform: translateX(calc(100vw + 160px)); }
-}
-@keyframes drift-slow {
-  0%   { transform: translateX(-200px); }
-  100% { transform: translateX(calc(100vw + 200px)); }
-}
-@keyframes sway {
-  0%, 100% { transform: rotate(-2deg); }
-  50%       { transform: rotate(2deg);  }
-}
-@keyframes float-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0);    }
-}
-@keyframes bob {
-  0%, 100% { transform: translateY(0);   }
-  50%       { transform: translateY(-6px); }
+/* Matsu collapses every font weight to bold (700) */
+.font-thin,
+.font-extralight,
+.font-light,
+.font-normal,
+.font-medium,
+.font-semibold,
+.font-bold,
+.font-extrabold,
+.font-black {
+  font-weight: 700 !important;
 }
 
-.animate-drift      { animation: drift-right 44s linear infinite; }
-.animate-drift-slow { animation: drift-slow  66s linear infinite; }
-.animate-sway       { animation: sway 3.5s ease-in-out infinite; transform-origin: bottom center; }
-.animate-float-up   { animation: float-up 0.7s ease-out both; }
-.animate-bob        { animation: bob 4s ease-in-out infinite; }
-
-/* ── Matsu card ────────────────────────────────────────────────────── */
-.matsu-card {
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 1.75rem;
-  box-shadow:
-    0 2px 4px rgba(45,36,22,0.06),
-    0 16px 40px rgba(45,36,22,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.7);
+/* Placeholders stay regular weight for legibility */
+::placeholder {
+  font-weight: 400;
 }
 
-/* ── Matsu buttons ─────────────────────────────────────────────────── */
-.matsu-btn-primary {
-  display: block;
-  width: 100%;
-  border-radius: 0.875rem;
-  padding: 0.75rem 1rem;
-  text-align: center;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: 2px solid #3a6147;
-  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
-  cursor: pointer;
-}
-.matsu-btn-primary:hover {
-  background: #5c9470;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(74,124,89,0.35);
+/* Force 2px borders everywhere (Matsu style) */
+*,
+*::before,
+*::after {
+  --tw-border-width: 2px;
 }
 
-.matsu-btn-secondary {
-  display: block;
-  width: 100%;
-  border-radius: 0.875rem;
-  padding: 0.75rem 1rem;
-  text-align: center;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  transition: background 0.18s, transform 0.18s;
-  cursor: pointer;
+.border,
+.border-2,
+.border-t,
+.border-b,
+.border-l,
+.border-r {
+  border-width: 2px !important;
 }
-.matsu-btn-secondary:hover {
-  background: rgba(74,124,89,0.09);
-  transform: translateY(-2px);
+
+/* ── Matsu watercolor texture overlay ────────────────────────────── */
+.texture {
+  background-image: url(/texture.jpg);
+  background-size: 100% 100%;
+  background-repeat: repeat;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+  z-index: 100;
+  isolation: isolate;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
 }
+
+/* ── Matsu flat shadow utilities ─────────────────────────────────── */
+.shadow-matsu      { box-shadow: 0 2px 0 0 var(--border); }
+.shadow-primary    { box-shadow: 0 2px 0 0 var(--primary-border); }
+.shadow-destructive{ box-shadow: 0 2px 0 0 var(--destructive-border); }
+
+/* ── Masked image blob shapes ────────────────────────────────────── */
+/* shape6 — complex decorative wavy silhouette (Matsu masked-image variant 6) */
+.mask-shape6 {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cpath fill='black' d='M200,20 C220,20 238,30 250,28 C268,25 278,10 295,14 C312,18 318,36 330,44 C342,52 358,50 368,62 C378,74 374,92 378,108 C382,124 392,136 390,152 C388,168 374,178 372,194 C370,210 380,224 376,240 C372,256 356,262 348,276 C340,290 342,308 330,318 C318,328 300,324 286,330 C272,336 262,350 246,352 C230,354 218,342 202,340 C186,338 172,348 156,344 C140,340 132,326 118,318 C104,310 88,312 76,300 C64,288 64,270 56,256 C48,242 34,232 30,216 C26,200 36,184 36,168 C36,152 26,138 28,122 C30,106 44,96 50,82 C56,68 52,50 62,38 C72,26 90,28 104,22 C118,16 132,8 148,10 C164,12 172,26 188,24 C196,23 200,20 200,20Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cpath fill='black' d='M200,20 C220,20 238,30 250,28 C268,25 278,10 295,14 C312,18 318,36 330,44 C342,52 358,50 368,62 C378,74 374,92 378,108 C382,124 392,136 390,152 C388,168 374,178 372,194 C370,210 380,224 376,240 C372,256 356,262 348,276 C340,290 342,308 330,318 C318,328 300,324 286,330 C272,336 262,350 246,352 C230,354 218,342 202,340 C186,338 172,348 156,344 C140,340 132,326 118,318 C104,310 88,312 76,300 C64,288 64,270 56,256 C48,242 34,232 30,216 C26,200 36,184 36,168 C36,152 26,138 28,122 C30,106 44,96 50,82 C56,68 52,50 62,38 C72,26 90,28 104,22 C118,16 132,8 148,10 C164,12 172,26 188,24 C196,23 200,20 200,20Z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/* ── Animations ───────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
