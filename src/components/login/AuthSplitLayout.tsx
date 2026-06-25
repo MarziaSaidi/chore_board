@@ -9,19 +9,19 @@ type AuthSplitLayoutProps = {
 export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutProps) {
   return (
     <div
-      className="flex min-h-[100dvh] flex-1 flex-col md:flex-row"
+      className="flex min-h-[100dvh] w-full flex-1 flex-col md:min-h-0 md:flex-row"
       style={{ background: "var(--background)" }}
     >
       {/* Mobile: compact scene above form */}
       <div
-        className="relative flex h-44 shrink-0 items-center justify-center overflow-hidden border-b-2 md:hidden"
-        style={{ borderColor: "var(--border)", background: "var(--card)" }}
+        className="relative flex h-56 w-full shrink-0 items-center justify-center overflow-hidden border-b-2 md:hidden"
+        style={{ borderColor: "var(--border)", background: "var(--secondary)" }}
       >
         <FamilyScene compact />
       </div>
 
       {/* Form panel — ~40% on desktop */}
-      <div className="flex w-full items-center justify-center px-4 py-10 md:w-[40%] md:py-16">
+      <div className="flex w-full shrink-0 items-center justify-center px-4 py-8 md:w-[42%] md:shrink-0 md:py-16 lg:w-[40%]">
         <main
           className="animate-fade-in-up w-full max-w-sm rounded-[var(--radius)] border-2 p-8 shadow-matsu"
           style={{ background: "var(--card)", borderColor: "var(--border)" }}
@@ -47,10 +47,10 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
 
       {/* Scene panel — ~60% on desktop */}
       <div
-        className="relative hidden flex-1 items-center justify-center overflow-hidden border-l-2 md:flex"
-        style={{ borderColor: "var(--border)", background: "var(--card)" }}
+        className="relative hidden min-h-[100dvh] flex-1 items-stretch overflow-hidden border-l-2 md:flex"
+        style={{ borderColor: "var(--border)", background: "var(--secondary)" }}
       >
-        <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 opacity-40">
           <div
             className="h-full w-full"
             style={{
@@ -59,7 +59,7 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
             }}
           />
         </div>
-        <div className="relative z-10 h-full w-full max-w-3xl px-8 py-12">
+        <div className="relative z-10 flex min-h-[100dvh] w-full items-center justify-center px-6 py-10 lg:px-10">
           <FamilyScene />
         </div>
       </div>
