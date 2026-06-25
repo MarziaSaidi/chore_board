@@ -7,6 +7,7 @@ import { getBoardMembers } from "@/lib/db/members";
 import { AppHeader } from "@/components/AppHeader";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { MembersPanel } from "@/components/board/MembersPanel";
+import { Avatar } from "@/components/ui";
 
 export default async function BoardPage({
   params,
@@ -54,21 +55,13 @@ export default async function BoardPage({
           <div className="flex -space-x-2">
             {members.slice(0, 5).map((m) => {
               const display = m.profile.full_name ?? m.profile.email;
-              const initials = display
-                .split(" ")
-                .map((w: string) => w[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2);
               return (
-                <span
+                <Avatar
                   key={m.user_id}
+                  seed={m.profile.email}
+                  size={32}
                   title={display}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold"
-                  style={{ background: "var(--primary)", color: "var(--primary-foreground)", borderColor: "var(--primary-border)" }}
-                >
-                  {initials}
-                </span>
+                />
               );
             })}
             {members.length > 5 && (

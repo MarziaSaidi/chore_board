@@ -5,7 +5,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { deleteTask, updateTask } from "@/app/boards/[id]/actions";
 import type { BoardMember, Task, TaskStatus } from "@/lib/supabase/types";
-import { Alert, Button, Input, Select, StatusBadge, Textarea } from "@/components/ui";
+import { Alert, Avatar, Button, Input, Select, StatusBadge, Textarea } from "@/components/ui";
 
 function EditIcon() {
   return (
@@ -147,18 +147,12 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
       {task.assignee_id && members && (() => {
         const assignee = members.find((m) => m.user_id === task.assignee_id)?.profile;
         if (!assignee) return null;
-        const initials = (assignee.full_name ?? assignee.email).split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
+        const assigneeLabel = assignee.full_name ?? assignee.email;
         return (
           <div className="mt-2 flex items-center gap-1.5">
-            <span
-              className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold border-2"
-              style={{ background: "var(--primary)", color: "var(--primary-foreground)", borderColor: "var(--primary-border)" }}
-              title={assignee.full_name ?? assignee.email}
-            >
-              {initials}
-            </span>
+            <Avatar seed={assignee.email} size={20} title={assigneeLabel} />
             <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
-              {assignee.full_name ?? assignee.email}
+              {assigneeLabel}
             </span>
           </div>
         );
