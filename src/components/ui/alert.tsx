@@ -2,23 +2,11 @@ import { cn } from "@/lib/cn";
 
 type Variant = "error" | "success" | "warning" | "info";
 
-const variantClasses: Record<Variant, string> = {
-  error: [
-    "border-red-200 bg-red-50 text-red-700",
-    "dark:border-red-900 dark:bg-red-950/50 dark:text-red-300",
-  ].join(" "),
-  success: [
-    "border-emerald-200 bg-emerald-50 text-emerald-700",
-    "dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300",
-  ].join(" "),
-  warning: [
-    "border-amber-200 bg-amber-50 text-amber-700",
-    "dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300",
-  ].join(" "),
-  info: [
-    "border-blue-200 bg-blue-50 text-blue-700",
-    "dark:border-blue-900 dark:bg-blue-950/50 dark:text-blue-300",
-  ].join(" "),
+const variantStyles: Record<Variant, React.CSSProperties> = {
+  error:   { background: "oklch(0.95 0.04 29)",  color: "var(--destructive)",          border: "2px solid var(--destructive-border)" },
+  success: { background: "oklch(0.93 0.04 145)", color: "oklch(0.32 0.1 145)",         border: "2px solid oklch(0.65 0.1 145)" },
+  warning: { background: "oklch(0.94 0.06 80)",  color: "oklch(0.38 0.1 75)",          border: "2px solid oklch(0.72 0.1 75)" },
+  info:    { background: "var(--muted)",          color: "var(--muted-foreground)",     border: "2px solid var(--border)" },
 };
 
 const icons: Record<Variant, React.ReactNode> = {
@@ -44,30 +32,14 @@ const icons: Record<Variant, React.ReactNode> = {
   ),
 };
 
-type AlertProps = {
-  variant?: Variant;
-  /** Rendered as the alert message */
-  children: React.ReactNode;
-  className?: string;
-};
+type AlertProps = { variant?: Variant; children: React.ReactNode; className?: string };
 
-/**
- * Inline status alert for form feedback, page-level messages, and notifications.
- * Automatically sets role="alert" for screen readers.
- *
- * @example
- * <Alert variant="error">Invalid email or password.</Alert>
- * <Alert variant="success">Board created successfully.</Alert>
- */
 export function Alert({ variant = "error", children, className }: AlertProps) {
   return (
     <div
       role="alert"
-      className={cn(
-        "flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm",
-        variantClasses[variant],
-        className,
-      )}
+      className={cn("flex items-start gap-2.5 rounded-[var(--radius)] px-4 py-3 text-sm font-bold", className)}
+      style={variantStyles[variant]}
     >
       {icons[variant]}
       <span>{children}</span>
