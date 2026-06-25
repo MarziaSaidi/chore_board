@@ -62,7 +62,7 @@ export function FormField({
       <div className={cn("space-y-1.5", className)}>
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="block text-sm font-semibold text-[#4a5e38]"
         >
           {label}
           {required && (
@@ -83,7 +83,7 @@ export function FormField({
             {error}
           </p>
         ) : hint ? (
-          <p id={hintId} className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p id={hintId} className="text-xs text-[#9e8870]">
             {hint}
           </p>
         ) : null}
