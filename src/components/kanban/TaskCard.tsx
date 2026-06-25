@@ -7,8 +7,6 @@ import { deleteTask, updateTask } from "@/app/boards/[id]/actions";
 import type { BoardMember, Task, TaskStatus } from "@/lib/supabase/types";
 import { Alert, Button, Input, Select, StatusBadge, Textarea } from "@/components/ui";
 
-// ── Icons ──────────────────────────────────────────────────────────
-
 function EditIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
@@ -34,75 +32,43 @@ function DragHandle() {
   );
 }
 
-// ── Status options ─────────────────────────────────────────────────
-
 const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
   { value: "todo",        label: "To Do"       },
   { value: "in_progress", label: "In Progress" },
   { value: "done",        label: "Done"        },
 ];
 
-// ── Edit form ──────────────────────────────────────────────────────
-
-function EditForm({
-  task,
-  boardId,
-  members,
-  onClose,
-}: {
-  task: Task;
-  boardId: string;
-  members: BoardMember[];
-  onClose: () => void;
+function EditForm({ task, boardId, members, onClose }: {
+  task: Task; boardId: string; members: BoardMember[]; onClose: () => void;
 }) {
   const [state, action] = useActionState(updateTask, null);
 
   return (
     <form
-      action={async (formData) => {
-        await action(formData);
-        onClose();
-      }}
-      className="rounded-lg border border-indigo-300 bg-white p-3 shadow-sm dark:border-indigo-700 dark:bg-zinc-800"
+      action={async (formData) => { await action(formData); onClose(); }}
+      className="rounded-[var(--radius)] border-2 p-3"
+      style={{ background: "var(--card)", borderColor: "var(--primary-border)", boxShadow: "0 2px 0 0 var(--primary-border)" }}
     >
       <input type="hidden" name="id" value={task.id} />
       <input type="hidden" name="boardId" value={boardId} />
 
-      {state?.error ? (
-        <Alert variant="error" className="mb-3 py-2 text-xs">
-          {state.error}
-        </Alert>
-      ) : null}
+      {state?.error ? <Alert variant="error" className="mb-3 py-2 text-xs">{state.error}</Alert> : null}
 
       <div className="mb-2">
-        <Input
-          name="title"
-          defaultValue={task.title}
-          required
-          maxLength={200}
-          aria-label="Task title"
-          className="text-sm"
-        />
+        <Input name="title" defaultValue={task.title} required maxLength={200} aria-label="Task title" className="text-sm" />
       </div>
-
       <div className="mb-3">
-        <Textarea
-          name="description"
-          defaultValue={task.description ?? ""}
-          rows={2}
-          placeholder="Description (optional)"
-          aria-label="Task description"
-          className="text-sm"
-        />
+        <Textarea name="description" defaultValue={task.description ?? ""} rows={2} placeholder="Description (optional)" aria-label="Task description" className="text-sm" />
       </div>
 
       {members.length > 0 && (
         <div className="mb-3">
-          <label className="mb-1 block text-xs text-zinc-500 dark:text-zinc-400">Assignee</label>
+          <label className="mb-1 block text-xs font-bold" style={{ color: "var(--foreground)" }}>Assignee</label>
           <select
             name="assignee_id"
             defaultValue={task.assignee_id ?? ""}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+            className="w-full rounded-[var(--radius)] border-2 px-3 py-1.5 text-xs font-bold focus:outline-none"
+            style={{ background: "var(--card)", color: "var(--foreground)", borderColor: "var(--input)", boxShadow: "0 2px 0 0 var(--border)" }}
           >
             <option value="">Unassigned</option>
             {members.map((m) => (
@@ -122,20 +88,16 @@ function EditForm({
   );
 }
 
-// ── Shared card content ────────────────────────────────────────────
-
 function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
-  task: Task;
-  boardId: string;
-  members?: BoardMember[];
-  onEdit: () => void;
+  task: Task; boardId: string; members?: BoardMember[]; onEdit: () => void;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
 }) {
   const [statusState, statusAction] = useActionState(updateTask, null);
 
   return (
     <article
-      className="group rounded-lg border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-800"
+      className="group rounded-[var(--radius)] border-2 p-3"
+      style={{ background: "var(--card)", borderColor: "var(--border)", boxShadow: "0 2px 0 0 var(--border)" }}
       aria-label={task.title}
     >
       <div className="flex items-start justify-between gap-2">
@@ -143,30 +105,28 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
           <button
             type="button"
             aria-label="Drag to reorder"
-            className="shrink-0 cursor-grab touch-none text-zinc-300 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400 active:cursor-grabbing"
+            className="shrink-0 cursor-grab touch-none active:cursor-grabbing"
+            style={{ color: "var(--muted-foreground)" }}
             {...dragHandleProps}
           >
             <DragHandle />
           </button>
-          <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          <p className="truncate text-sm font-bold" style={{ color: "var(--foreground)" }}>
             {task.title}
           </p>
         </div>
 
-        <div
-          className="flex shrink-0 gap-1 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100"
-          aria-label="Task actions"
-        >
+        <div className="flex shrink-0 gap-1 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
           <button
             type="button"
             onClick={onEdit}
             aria-label={`Edit "${task.title}"`}
             title="Edit"
-            className="rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
+            className="rounded p-1 transition hover:opacity-70 focus:outline-none"
+            style={{ color: "var(--muted-foreground)" }}
           >
             <EditIcon />
           </button>
-
           <form action={deleteTask}>
             <input type="hidden" name="id" value={task.id} />
             <input type="hidden" name="boardId" value={boardId} />
@@ -174,7 +134,8 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
               type="submit"
               aria-label={`Delete "${task.title}"`}
               title="Delete"
-              className="rounded p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 dark:hover:bg-red-950/50"
+              className="rounded p-1 transition hover:opacity-70 focus:outline-none"
+              style={{ color: "var(--destructive)" }}
             >
               <TrashIcon />
             </button>
@@ -183,7 +144,7 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
       </div>
 
       {task.description ? (
-        <p className="mt-1 whitespace-pre-wrap text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 whitespace-pre-wrap text-xs" style={{ color: "var(--muted-foreground)" }}>
           {task.description}
         </p>
       ) : null}
@@ -191,21 +152,17 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
       {task.assignee_id && members && (() => {
         const assignee = members.find((m) => m.user_id === task.assignee_id)?.profile;
         if (!assignee) return null;
-        const initials = (assignee.full_name ?? assignee.email)
-          .split(" ")
-          .map((w) => w[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2);
+        const initials = (assignee.full_name ?? assignee.email).split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
         return (
           <div className="mt-2 flex items-center gap-1.5">
             <span
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
+              className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold border-2"
+              style={{ background: "var(--primary)", color: "var(--primary-foreground)", borderColor: "var(--primary-border)" }}
               title={assignee.full_name ?? assignee.email}
             >
               {initials}
             </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
               {assignee.full_name ?? assignee.email}
             </span>
           </div>
@@ -214,7 +171,6 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
 
       <div className="mt-3 space-y-1.5">
         <StatusBadge status={task.status} />
-
         <form action={statusAction}>
           <input type="hidden" name="id" value={task.id} />
           <input type="hidden" name="boardId" value={boardId} />
@@ -226,66 +182,36 @@ function CardContent({ task, boardId, members, onEdit, dragHandleProps }: {
             className="py-1 text-xs"
           >
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </Select>
-          {statusState?.error ? (
-            <Alert variant="error" className="mt-1 py-1.5 text-xs">
-              {statusState.error}
-            </Alert>
-          ) : null}
+          {statusState?.error ? <Alert variant="error" className="mt-1 py-1.5 text-xs">{statusState.error}</Alert> : null}
         </form>
       </div>
     </article>
   );
 }
 
-// ── Sortable card (used inside columns) ───────────────────────────
-
 export function TaskCard({ task, boardId, members }: { task: Task; boardId: string; members: BoardMember[] }) {
   const [editing, setEditing] = useState(false);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: task.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.4 : 1,
-  };
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 };
 
   if (editing) {
-    return (
-      <div ref={setNodeRef} style={style}>
-        <EditForm task={task} boardId={boardId} members={members} onClose={() => setEditing(false)} />
-      </div>
-    );
+    return <div ref={setNodeRef} style={style}><EditForm task={task} boardId={boardId} members={members} onClose={() => setEditing(false)} /></div>;
   }
 
   return (
     <div ref={setNodeRef} style={style}>
-      <CardContent
-        task={task}
-        boardId={boardId}
-        members={members}
-        onEdit={() => setEditing(true)}
-        dragHandleProps={{ ...attributes, ...listeners }}
-      />
+      <CardContent task={task} boardId={boardId} members={members} onEdit={() => setEditing(true)} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   );
 }
 
-// ── Overlay card (follows cursor during drag) ─────────────────────
-
 export function TaskCardDragOverlay({ task }: { task: Task }) {
   return (
-    <div className="rotate-2 scale-105 opacity-95 shadow-xl">
-      <CardContent
-        task={task}
-        boardId=""
-        onEdit={() => {}}
-      />
+    <div className="rotate-2 scale-105 opacity-95" style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}>
+      <CardContent task={task} boardId="" onEdit={() => {}} />
     </div>
   );
 }
