@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
@@ -13,18 +12,6 @@ export default async function Home() {
       className="flex flex-1 flex-col items-center justify-center px-4 py-16 gap-10"
       style={{ background: "var(--background)" }}
     >
-      {/* Masked hero image from Matsu demo */}
-      <div className="mask-shape6 overflow-hidden animate-fade-in-up" style={{ width: 260, height: 260, animationDelay: "0s" }}>
-        <Image
-          src="https://matsu-theme.vercel.app/house.png"
-          alt="A cozy Ghibli house"
-          width={260}
-          height={260}
-          className="object-cover w-full h-full"
-          priority
-        />
-      </div>
-
       {/* Card */}
       <main
         className="animate-fade-in-up w-full max-w-sm rounded-[var(--radius)] border-2 p-8 shadow-matsu"
