@@ -16,22 +16,38 @@ export default function BoardError({
   }, [error]);
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-16">
+    <div
+      className="flex flex-1 items-center justify-center px-4 py-16"
+      style={{ background: "var(--background)" }}
+    >
       <div className="text-center">
-        <p className="text-4xl font-bold text-zinc-300 dark:text-zinc-700" aria-hidden="true">
+        <p
+          className="text-4xl font-bold"
+          style={{ fontFamily: "var(--font-serif)", color: "var(--muted-foreground)" }}
+          aria-hidden="true"
+        >
           ✕
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+        <h2
+          className="mt-2 text-lg font-bold"
+          style={{ fontFamily: "var(--font-serif)", color: "var(--foreground)" }}
+        >
           Failed to load board
         </h2>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm" style={{ color: "var(--muted-foreground)" }}>
           Something went wrong loading this board.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button onClick={reset}>Try again</Button>
           <Link
             href="/dashboard"
-            className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-300 bg-white px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+            className="inline-flex h-10 items-center justify-center rounded-[var(--radius)] border-2 px-4 text-sm font-bold transition-all hover:opacity-90 active:translate-y-0.5 active:shadow-none"
+            style={{
+              background: "var(--secondary)",
+              borderColor: "var(--border)",
+              color: "var(--secondary-foreground)",
+              boxShadow: "0 2px 0 0 var(--border)",
+            }}
           >
             Back to boards
           </Link>

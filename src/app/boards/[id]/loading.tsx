@@ -2,9 +2,12 @@ import { Skeleton, TaskCardSkeleton } from "@/components/ui";
 
 export default function BoardLoading() {
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-950 dark:to-zinc-900">
+    <div className="flex flex-1 flex-col" style={{ background: "var(--background)" }}>
       {/* Header skeleton */}
-      <div className="flex items-center justify-between border-b border-zinc-200 bg-white/70 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/70">
+      <div
+        className="flex items-center justify-between border-b-2 px-6 py-4"
+        style={{ background: "var(--card)", borderColor: "var(--border)" }}
+      >
         <Skeleton className="h-9 w-36" />
         <Skeleton className="h-9 w-24" />
       </div>
@@ -18,7 +21,8 @@ export default function BoardLoading() {
           {Array.from({ length: 3 }).map((_, col) => (
             <div
               key={col}
-              className="flex flex-col rounded-2xl border border-zinc-200 bg-zinc-50/70 p-3 dark:border-zinc-800 dark:bg-zinc-900/50"
+              className="flex flex-col rounded-[var(--radius)] border-2 p-3"
+              style={{ background: "var(--secondary)", borderColor: "var(--border)" }}
             >
               <div className="mb-3 flex items-center justify-between px-1">
                 <Skeleton className="h-4 w-20" />

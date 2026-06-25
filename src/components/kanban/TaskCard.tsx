@@ -64,19 +64,14 @@ function EditForm({ task, boardId, members, onClose }: {
       {members.length > 0 && (
         <div className="mb-3">
           <label className="mb-1 block text-xs font-bold" style={{ color: "var(--foreground)" }}>Assignee</label>
-          <select
-            name="assignee_id"
-            defaultValue={task.assignee_id ?? ""}
-            className="w-full rounded-[var(--radius)] border-2 px-3 py-1.5 text-xs font-bold focus:outline-none"
-            style={{ background: "var(--card)", color: "var(--foreground)", borderColor: "var(--input)", boxShadow: "0 2px 0 0 var(--border)" }}
-          >
+          <Select name="assignee_id" defaultValue={task.assignee_id ?? ""} className="text-xs">
             <option value="">Unassigned</option>
             {members.map((m) => (
               <option key={m.user_id} value={m.user_id}>
                 {m.profile.full_name ?? m.profile.email}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       )}
 

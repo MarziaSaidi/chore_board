@@ -38,22 +38,21 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-2xl border border-dashed",
-        "border-zinc-300 bg-white/50 px-6 py-12 text-center",
-        "dark:border-zinc-700 dark:bg-zinc-900/30",
+        "flex flex-col items-center justify-center rounded-[var(--radius)] border-2 border-dashed px-6 py-12 text-center",
         className,
       )}
+      style={{ background: "var(--card)", borderColor: "var(--border)" }}
     >
       {icon ? (
-        <div className="mb-4 text-zinc-400 dark:text-zinc-600" aria-hidden="true">
+        <div className="mb-4" style={{ color: "var(--muted-foreground)" }} aria-hidden="true">
           {icon}
         </div>
       ) : null}
 
-      <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{title}</p>
+      <p className="text-sm font-bold" style={{ color: "var(--foreground)" }}>{title}</p>
 
       {description ? (
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">{description}</p>
+        <p className="mt-1 text-sm" style={{ color: "var(--muted-foreground)" }}>{description}</p>
       ) : null}
 
       {action ? <div className="mt-5">{action}</div> : null}

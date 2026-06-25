@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { inviteMember, removeMember } from "@/app/boards/[id]/members-actions";
 import type { BoardMember } from "@/lib/supabase/types";
-import { Alert, Button } from "@/components/ui";
+import { Alert, Button, Input } from "@/components/ui";
 
 function getInitials(name: string): string {
   return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
@@ -103,13 +103,13 @@ export function MembersPanel({ boardId, members, ownerId, currentUserId }: {
           {state?.type === "success" && <Alert variant="success">{state.message}</Alert>}
           {state?.type === "error"   && <Alert variant="error">{state.message}</Alert>}
           <div className="flex gap-2">
-            <input
+            <Input
               name="email"
               type="email"
               required
               placeholder="Invite by email…"
-              className="min-w-0 flex-1 rounded-[var(--radius)] border-2 px-3 py-2 text-sm font-bold focus:outline-none"
-              style={{ background: "var(--card)", color: "var(--foreground)", borderColor: "var(--input)", boxShadow: "0 2px 0 0 var(--border)" }}
+              aria-label="Invite by email"
+              className="min-w-0 flex-1"
             />
             <InviteButton />
           </div>

@@ -19,10 +19,8 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        "animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-800",
-        className,
-      )}
+      className={cn("animate-pulse rounded-[var(--radius)]", className)}
+      style={{ backgroundColor: "var(--muted)" }}
     />
   );
 }
@@ -46,7 +44,12 @@ export function BoardCardSkeleton() {
   return (
     <div
       aria-hidden="true"
-      className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"
+      className="rounded-[var(--radius)] border-2 p-5"
+      style={{
+        background: "var(--card)",
+        borderColor: "var(--border)",
+        boxShadow: "0 2px 0 0 var(--border)",
+      }}
     >
       <Skeleton className="mb-2 h-5 w-3/4" />
       <Skeleton className="h-3 w-1/2" />
@@ -59,7 +62,12 @@ export function TaskCardSkeleton() {
   return (
     <div
       aria-hidden="true"
-      className="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-800"
+      className="rounded-[var(--radius)] border-2 p-3"
+      style={{
+        background: "var(--card)",
+        borderColor: "var(--border)",
+        boxShadow: "0 2px 0 0 var(--border)",
+      }}
     >
       <Skeleton className="mb-2 h-4 w-4/5" />
       <Skeleton className="h-3 w-2/3" />

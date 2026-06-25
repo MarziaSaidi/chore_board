@@ -6,18 +6,6 @@ import { useFormField } from "./form-field";
 
 export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-const baseClasses = [
-  "w-full rounded-lg border bg-white px-3 py-2 text-sm text-zinc-900",
-  "placeholder:text-zinc-400",
-  "resize-none transition-colors duration-150",
-  "focus:outline-none focus:ring-2 focus:ring-offset-0",
-  "disabled:cursor-not-allowed disabled:opacity-60",
-  "dark:bg-zinc-800 dark:text-zinc-100",
-].join(" ");
-
-const normalBorder = "border-zinc-300 focus:border-indigo-500 focus:ring-indigo-500/30 dark:border-zinc-700";
-const errorBorder  = "border-red-400 focus:border-red-500 focus:ring-red-500/30 dark:border-red-600";
-
 /**
  * Multi-line text area. Auto-wires aria attributes when inside a <FormField>.
  *
@@ -27,7 +15,7 @@ const errorBorder  = "border-red-400 focus:border-red-500 focus:ring-red-500/30 
  * </FormField>
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
-  { className, rows = 3, ...props },
+  { className, style, rows = 3, ...props },
   ref,
 ) {
   const field = useFormField();
@@ -42,10 +30,23 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         field?.hasError ? field.errorId : field?.hintId ?? undefined
       }
       className={cn(
-        baseClasses,
-        field?.hasError ? errorBorder : normalBorder,
+        "w-full rounded-[var(--radius)] border-2 px-3 py-2 text-sm font-bold",
+        "resize-none transition-all duration-150",
+        "placeholder:font-normal",
+        "focus:outline-none focus:ring-2 focus:ring-offset-0",
+        "disabled:cursor-not-allowed disabled:opacity-60",
         className,
       )}
+      style={{
+        background: "var(--card)",
+        color: "var(--foreground)",
+        borderColor: field?.hasError ? "var(--destructive)" : "var(--input)",
+        boxShadow: field?.hasError
+          ? "0 2px 0 0 var(--destructive-border)"
+          : "0 2px 0 0 var(--border)",
+        "--tw-ring-color": "var(--ring)",
+        ...style,
+      } as React.CSSProperties}
       {...props}
     />
   );

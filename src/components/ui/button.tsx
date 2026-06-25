@@ -4,32 +4,34 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
 
-// ── Variant & size maps ────────────────────────────────────────────
-
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
-const variantClasses: Record<Variant, string> = {
-  primary: [
-    "bg-[#4a7a52] text-[#f5edd8] border-2 border-[#3a6140]",
-    "hover:bg-[#5a8a62]",
-    "focus-visible:ring-[#4a7a52]",
-  ].join(" "),
-  secondary: [
-    "border-2 border-[#4a7a52] bg-transparent text-[#4a7a52]",
-    "hover:bg-[#4a7a52]/10",
-    "focus-visible:ring-[#4a7a52]",
-  ].join(" "),
-  ghost: [
-    "text-[#6b5744]",
-    "hover:bg-[#4a7a52]/10 hover:text-[#2c1f14]",
-    "focus-visible:ring-[#4a7a52]",
-  ].join(" "),
-  danger: [
-    "bg-red-700 text-white border-2 border-red-800",
-    "hover:bg-red-600",
-    "focus-visible:ring-red-500",
-  ].join(" "),
+const variantStyles: Record<Variant, React.CSSProperties> = {
+  primary: {
+    background: "var(--primary)",
+    color: "var(--primary-foreground)",
+    borderColor: "var(--primary-border)",
+    boxShadow: "0 2px 0 0 var(--primary-border)",
+  },
+  secondary: {
+    background: "var(--secondary)",
+    color: "var(--secondary-foreground)",
+    borderColor: "var(--border)",
+    boxShadow: "0 2px 0 0 var(--border)",
+  },
+  ghost: {
+    background: "transparent",
+    color: "var(--foreground)",
+    borderColor: "transparent",
+    boxShadow: "none",
+  },
+  danger: {
+    background: "var(--destructive)",
+    color: "var(--destructive-foreground)",
+    borderColor: "var(--destructive-border)",
+    boxShadow: "0 2px 0 0 var(--destructive-border)",
+  },
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -38,32 +40,15 @@ const sizeClasses: Record<Size, string> = {
   lg: "h-11 px-5 text-base gap-2",
 };
 
-// ── Props ──────────────────────────────────────────────────────────
-
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
   size?: Size;
-  /** Shows a spinner and sets aria-busy. Automatically disables the button. */
   loading?: boolean;
-  /** Stretches to full container width. */
   fullWidth?: boolean;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
 };
 
-/**
- * Unified button with four variants, three sizes, and a built-in loading state.
- *
- * @example
- * // Primary submit button
- * <Button type="submit" loading={pending}>Save</Button>
- *
- * // Danger with leading icon
- * <Button variant="danger" size="sm" leadingIcon={<TrashIcon />}>Delete</Button>
- *
- * // Ghost full-width
- * <Button variant="ghost" fullWidth>Cancel</Button>
- */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     variant = "primary",
@@ -75,6 +60,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     disabled,
     children,
     className,
+    style,
     ...props
   },
   ref,
@@ -87,16 +73,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={isDisabled}
       aria-busy={loading || undefined}
       className={cn(
-        "inline-flex items-center justify-center rounded-xl font-semibold",
+        "inline-flex items-center justify-center rounded-[var(--radius)] border-2 font-bold",
         "transition-all duration-150",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        "dark:focus-visible:ring-offset-zinc-900",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
         "disabled:cursor-not-allowed disabled:opacity-60",
-        variantClasses[variant],
+        "hover:opacity-90 active:translate-y-0.5 active:shadow-none",
         sizeClasses[size],
         fullWidth && "w-full",
         className,
       )}
+      style={{ ...variantStyles[variant], ...style }}
       {...props}
     >
       {loading ? (
@@ -104,9 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ) : leadingIcon ? (
         <span className="shrink-0" aria-hidden="true">{leadingIcon}</span>
       ) : null}
-
       {children}
-
       {!loading && trailingIcon ? (
         <span className="shrink-0" aria-hidden="true">{trailingIcon}</span>
       ) : null}
