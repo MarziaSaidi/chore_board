@@ -1,16 +1,14 @@
 import { cn } from "@/lib/cn";
 import type { TaskStatus } from "@/lib/supabase/types";
 
-// ── Generic badge ──────────────────────────────────────────────────
-
 type Variant = "default" | "primary" | "success" | "warning" | "danger";
 
-const variantClasses: Record<Variant, string> = {
-  default: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
-  primary: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300",
-  success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
-  warning: "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300",
-  danger:  "bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300",
+const variantStyles: Record<Variant, React.CSSProperties> = {
+  default: { background: "var(--muted)",     color: "var(--muted-foreground)", border: "2px solid var(--border)" },
+  primary: { background: "var(--primary)",   color: "var(--primary-foreground)", border: "2px solid var(--primary-border)" },
+  success: { background: "oklch(0.78 0.09 145)", color: "oklch(0.25 0.07 145)", border: "2px solid oklch(0.62 0.1 145)" },
+  warning: { background: "oklch(0.88 0.1 80)",  color: "oklch(0.35 0.09 75)",  border: "2px solid oklch(0.72 0.1 75)"  },
+  danger:  { background: "var(--destructive)", color: "var(--destructive-foreground)", border: "2px solid var(--destructive-border)" },
 };
 
 type BadgeProps = {
@@ -19,52 +17,26 @@ type BadgeProps = {
   className?: string;
 };
 
-/**
- * Compact status chip. Use for counts, labels, and short state indicators.
- *
- * @example
- * <Badge variant="success">Done</Badge>
- * <Badge>{count}</Badge>
- */
 export function Badge({ variant = "default", children, className }: BadgeProps) {
   return (
     <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-        variantClasses[variant],
-        className,
-      )}
+      className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold", className)}
+      style={variantStyles[variant]}
     >
       {children}
     </span>
   );
 }
 
-// ── Task-status badge ──────────────────────────────────────────────
-
 const statusConfig: Record<TaskStatus, { label: string; variant: Variant }> = {
-  todo:        { label: "To Do",       variant: "default"  },
-  in_progress: { label: "In Progress", variant: "warning"  },
-  done:        { label: "Done",        variant: "success"  },
+  todo:        { label: "To Do",       variant: "default" },
+  in_progress: { label: "In Progress", variant: "warning" },
+  done:        { label: "Done",        variant: "success" },
 };
 
-type StatusBadgeProps = {
-  status: TaskStatus;
-  className?: string;
-};
+type StatusBadgeProps = { status: TaskStatus; className?: string };
 
-/**
- * Semantic badge for task status — maps value to label + colour automatically.
- *
- * @example
- * <StatusBadge status="in_progress" />
- * // renders: "In Progress" badge in amber
- */
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const { label, variant } = statusConfig[status];
-  return (
-    <Badge variant={variant} className={className}>
-      {label}
-    </Badge>
-  );
+  return <Badge variant={variant} className={className}>{label}</Badge>;
 }
