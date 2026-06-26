@@ -42,6 +42,16 @@ export async function signup(
   redirect("/dashboard");
 }
 
+export async function loginAsDemo(): Promise<never> {
+  const supabase = await createClient();
+  await supabase.auth.signInWithPassword({
+    email: "demo@choreboard.app",
+    password: "demo1234",
+  });
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
+}
+
 export async function signout() {
   const supabase = await createClient();
   await supabase.auth.signOut();

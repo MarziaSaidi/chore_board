@@ -4,6 +4,9 @@ A real-time collaborative task manager with a Studio Ghibli-inspired UI. Built w
 
 **Live demo:** [choreboard-dun.vercel.app](https://choreboard-dun.vercel.app)
 
+> **Try it instantly — no account needed:**
+> Email: `demo@choreboard.app` · Password: `demo1234`
+
 ---
 
 ## Features
